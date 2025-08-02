@@ -1,6 +1,8 @@
-# FormatAsm for qEditor, tEditor and CodeEdit
+# FormatAsm for qEditor (QE), tEditor (TE) and CodeEdit (CE)
 
 Current features:
+
+- Only for qEditor (so far).
 
 - Process all file (TODO selection)
 
