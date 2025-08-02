@@ -6,6 +6,6 @@ Current features:
 
 - Process all file (TODO selection)
 
-- Changes only in .code section.
+- Changes only in .code section and macros.
   
 - No changes in lines with just a comment.
