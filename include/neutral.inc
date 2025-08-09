@@ -1,16 +1,9 @@
-; ==================================================================================================
-; Title:      Neutral.inc
-; Author:     Héctor S. Enrique
-; Version:    2.0.0
-; Purpose:    BNC implementation.
-; Notes:      Version 1.0.0, July 2023
-;               - First release.
-;               Neutral Bitness Code (BNC) support for Masm32SDK and Masm64SDK
-;               Adapted from ObjAsm-C.2 (Friedrich, et al.)
-;               [ https://github.com/ObjAsm/ObjAsm-C.2 ]  
-;             Version 2.0.0, August 2025
-;                - Introduce @ws like control (will allow 16 bits apps)
-; ==================================================================================================
+;--------------------------------------------------------------------
+;    Neutral bitness support form Masm32SDK and Masm64SDK
+;            Adapted from ObjAsm-C.2 (Friedrich, et al.)
+;                        [ https://github.com/ObjAsm/ObjAsm-C.2 ]  
+;                                                      15/07/2023 HSE
+;--------------------------------------------------------------------
 
 ;%echo @CatStr(%@ws)        ; must be decalred previously :)
 
@@ -25,7 +18,7 @@
 
 if @ws eq 8
     include \masm64\include64\masm64rt.inc
-
+    include \masm32\macros\SmplMath\accs\macros64G.inc
     xword textequ <qword>
     
     xax textequ <rax>
@@ -57,7 +50,6 @@ else
 
     xd  textequ <dd>    
     @RegisterSH equ 2
-    
 endif
 
     XWORD textequ <xword>
@@ -182,3 +174,11 @@ else
 
 
 endif    
+
+USINGS macro arg1, arg2
+    if @ws eq 4
+        USING arg1
+    else
+        USING arg1, arg2
+    endif
+endm
