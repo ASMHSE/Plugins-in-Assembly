@@ -1,55 +1,70 @@
+parentesisI equ 40 ;   "("
+parentesisD equ 41 ;   ")"
+angbrkI equ 60 ;   "<"
+angbrkD equ 62 ;   ">"
+backslash equ 92 ;   "\"
+
 closetoken macro 
     mov   xcx, xax 
     sub   xcx, xdi 
-    mov   ltoken[xbx*@ws], xcx 
-    mov   xdx, ltoken[xbx*@ws] 
-    mov   ttoken[xbx*@ws], 0 
+    mov   _ltoken(xbx*@ws), xcx 
+    mov   xdx, _ltoken(xbx*@ws) 
+    mov   _ttoken(xbx*@ws), 0 
     mov   iniciado, 0 
 endm  
 
 storetoken macro tipo 
     inc   xbx 
-    mov   vtoken[xbx*@ws], xax 
-    mov   ltoken[xbx*@ws], 1 
-    mov   ttoken[xbx*@ws], tipo 
+    mov   _vtoken(xbx*@ws), xax 
+    mov   _ltoken(xbx*@ws), 1 
+    mov   _ttoken(xbx*@ws), tipo 
 endm  
-
 checkenclosers macro 
-    .if dl == "'" && encloser2 == 0 
+    @if dl eq "'" && encloser2 eq 0 
         inc   encloser1 
         inc   enclosers 
-    .elseif dl == '"' && encloser1 == 0 
+    @elseif dl eq '"' && encloser1 eq 0 
         inc   encloser2 
         inc   enclosers 
-    .elseif dl == "(" 
+    @elseif dl eq parentesisI 
         inc   encloser3 
         inc   enclosers 
-    .elseif dl == "[" 
+    @elseif dl eq "[" 
         inc   encloser4 
         inc   enclosers 
-    .elseif dl == "<" 
+    @elseif dl eq angbrkI 
         inc   encloser5 
         inc   enclosers 
-    .endif 
+    @endif 
 endm  
 ; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
 
-szProcessLine proc uses xbx xdi ;here a comment
+ProcessLine proc ;here a comment
     local buffer[1024] : byte 
     local iniciado : xword, spacing : xword 
+    ;local t_order : xword  ; xbx
+
+    USING xbx, xdi 
+
+    SaveRegs 
 
     mov   xax, inicio 
     lea   xcx, buffer 
 
   loop1i: 
-    .if xax < final  
+    @if xax lt final 
         mov   dl, [xax] 
         mov   byte ptr [xcx], dl 
         inc   xax 
         inc   xcx 
         jmp   loop1i 
-    .endif 
+    @endif 
     mov   byte ptr [xcx], 0 
+    if    @ws eq 8 
+        DBout str$(linea), " - ", addr buffer 
+    else  
+    ;    PrintString buffer
+    endif 
     mov   xbx, -1 
     mov   xdi, 0 
     mov   iniciado, 0 
@@ -58,98 +73,102 @@ szProcessLine proc uses xbx xdi ;here a comment
     mov   enclosers, 0 
     mov   xax, inicio 
   loop2i: 
-    .if xax < final  
+    @if xax lt final 
         mov   dl, [xax] 
-        .if enclosers > 0 
-            .if encloser1 > 0 && encloser2 == 0 ;   comillas simples
-                .if dl == "'" 
+        @if enclosers gt 0 
+            @if encloser1 gt 0 && encloser2 eq 0 ;   comillas simples
+                @if dl eq "'" 
                     dec   encloser1 
                     dec   enclosers 
-                .endif 
-            .elseif encloser2 > 0 && encloser1 == 0 ;   comillas dobles
-                .if dl == '"' 
+                @endif 
+            @elseif encloser2 gt 0 && encloser1 eq 0 ;   comillas dobles
+                @if dl eq '"' 
                     dec   encloser2 
                     dec   enclosers 
-                .endif 
-            .elseif encloser3 > 0 ;   parentesis
-                .if dl == ')' 
+                @endif 
+            @elseif encloser3 gt 0 ;   parentesis
+                @if dl eq parentesisD 
                     dec   encloser3 
                     dec   enclosers 
-                .endif 
-            .elseif encloser4 > 0 ;   square encloser
-                .if dl == ']' 
+                @endif 
+            @elseif encloser4 gt 0 ;   square encloser
+                @if dl eq ']' 
                     dec   encloser4 
                     dec   enclosers 
-                .endif 
-            .elseif encloser5 > 0 ;   square encloser
-                .if dl == '>' 
+                @endif 
+            @elseif encloser5 gt 0 ;   square encloser
+                @if dl eq angbrkD 
                     dec   encloser5 
                     dec   enclosers 
-                .endif 
-            .endif 
-        .else 
-            .if iniciado 
-                .if dl == 20h || dl == 9 
+                @endif 
+            @endif 
+        @else 
+            @if iniciado 
+                @if dl eq 20h || dl eq 9 
                     closetoken 
-                .elseif dl == "," 
+                @elseif dl eq "," 
                     closetoken 
                     storetoken token_comma 
-                .elseif dl == ":" 
+                @elseif dl eq ":" 
                     closetoken 
                     storetoken token_colon 
-                .elseif dl == "\" 
+                @elseif dl eq backslash 
                     closetoken 
                     storetoken token_cutline 
-                .elseif dl == ";" 
+                @elseif dl eq ";" 
                     closetoken 
                     jmp   iscomment 
-                .endif 
+                @endif 
                 checkenclosers 
-            .else 
-                .if dl == 20h || dl == 9 
-                .elseif dl == "," 
+            @else 
+                @if dl eq 20h || dl eq 9 
+                    ;@if dl eq 9
+                    ;    add spacing, ltab
+                    ;@else
+                    ;    inc spacing
+                    ;@endif
+                @elseif dl eq "," 
                     storetoken token_comma 
-                .elseif dl == "\" 
+                @elseif dl eq backslash 
                     storetoken token_cutline 
-                .elseif dl == ";" 
+                @elseif dl eq ";" 
                     jmp   iscomment 
-                .elseif dl == "%" 
+                @elseif dl eq "%" 
                     storetoken token_expand 
-                .else 
+                @else 
                     mov   iniciado, 1 
                     inc   xbx 
-                    mov   vtoken[xbx*@ws], xax 
+                    mov   _vtoken(xbx*@ws), xax 
                     mov   xdi, xax 
                     checkenclosers 
-                .endif 
-            .endif 
-        .endif 
+                @endif 
+            @endif 
+        @endif 
         inc   xax 
-        .if xbx != -1 && xbx > nStoredTokens 
+        @if xbx ne -1 && xbx gt nStoredTokens 
             jmp   searchcomment 
-        .endif 
+        @endif 
         jmp   loop2i 
-    .endif 
-    .if iniciado == 1 
+    @endif 
+    @if iniciado eq 1 
         closetoken 
-    .endif 
+    @endif 
     jmp   termina 
 
   searchcomment: 
 
   loop3i: 
-
-    .if xax <= final  
+    @if xax le final 
         mov   dl, [xax] 
-        .if dl == ";" 
-            .if iniciado == 1 
+        @if dl eq ";" 
+            @if iniciado eq 1 
                 closetoken 
-            .endif 
+            @endif 
             jmp   iscomment 
-        .endif 
+        @endif 
         inc   xax 
         jmp   loop3i 
-    .endif 
+    @endif 
     jmp   termina 
 
   iscomment: 
@@ -163,7 +182,9 @@ szProcessLine proc uses xbx xdi ;here a comment
     jmp   termina 
 
   termina: 
-
     mov   ntokens, xbx 
+
+    RestoreRegs 
+
     ret   
-szProcessLine endp 
+ProcessLine endp 

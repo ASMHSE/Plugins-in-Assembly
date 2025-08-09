@@ -1,8 +1,10 @@
-# FormatAsm for qEditor (QE), tEditor (TE) and CodeEdit (CE)
+# FormatAsm in Assembly
+
+        for qEditor (QE), tEditor (TE) and CodeEdit (CE)
 
 Current features:
 
-- Only for qEditor (so far).
+- Only working for qEditor (so far).
 
 - Process all file (TODO selection)
 

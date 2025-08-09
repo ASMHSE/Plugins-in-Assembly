@@ -7,24 +7,31 @@
     lrevl           equ  -2     
     ;lrevf1          equ   0
 
+    stringitem macro name, value
+       % @CatStr(<name>,<_len>) = @SizeStr(<value >)-1 
+        exitm <&name db "&value",0>
+    endm
+
     stringtable macro name, tope
+        align @ws
         name label xword
         count = 0
         repeat tope
           %  xd offset @CatStr(<name>,%count)   
+          %  xd @CatStr(<name>,%count,<_len>)   
             count = count+1
         endm    
     endm
 
-    para0   db  "macro",0
-    para1   db  "endm",0
-    para2   db  "for",0
-    para3   db  "forc",0
-    para4   db  "repeat",0
-    para5   db  "rept",0
-    para6   db  "while",0
-    para7   db  "irp",0
-    para8   db  "irpc",0
+    stringitem(para0 ,macro)
+    stringitem(para1 ,endm)
+    stringitem(para2 ,for)
+    stringitem(para3 ,forc)
+    stringitem(para4 ,repeat)
+    stringitem(para5 ,rept)
+    stringitem(para6 ,while)
+    stringitem(para7 ,irp)
+    stringitem(para8 ,irpc)
 
     stringtable para, 9
 
@@ -37,78 +44,78 @@
     par7b   db  "includelib",0
 
 
-    parb0   db  "if",0
-    parb1   db  "ife",0
-    parb2   db  "if1",0
-    parb3   db  "if2",0  
-    parb4   db  "ifdif",0 
-    parb5   db  "ifdifi",0  
-    parb6   db  "ifidn",0  
-    parb7   db  "ifidni",0  
-    parb8   db  "ifb",0  
-    parb9   db  "ifnb",0  
-    parb10  db  "ifdef",0  
-    parb11  db  "ifndef",0  
-    parb12  db  "endif",0  
-    parb13  db  "else",0  
-    parb14  db  "elseif",0  
-    parb15  db  "elseife",0  
-    parb16  db  "elseif1",0  
-    parb17  db  "elseif2",0  
-    parb18  db  "elseifdif",0  
-    parb19  db  "elseifdifi",0  
-    parb20  db  "elseifidn",0  
-    parb21  db  "elseifidni",0  
-    parb22  db  "elseifb",0  
-    parb23  db  "elseifnb",0  
-    parb24  db  "elseifdef",0  
-    parb25  db  "elseifndef",0  
+    stringitem(parb0 ,if)
+    stringitem(parb1 ,ife)
+    stringitem(parb2 ,if1)
+    stringitem(parb3 ,if2)
+    stringitem(parb4 ,ifdif)
+    stringitem(parb5 ,ifdifi)
+    stringitem(parb6 ,ifidn)  
+    stringitem(parb7 ,ifidni)
+    stringitem(parb8 ,ifb)
+    stringitem(parb9 ,ifnb)
+    stringitem(parb10,ifdef)
+    stringitem(parb11,ifndef)
+    stringitem(parb12,endif)
+    stringitem(parb13,else)
+    stringitem(parb14,elseif)
+    stringitem(parb15,elseife)
+    stringitem(parb16,elseif1)
+    stringitem(parb17,elseif2)
+    stringitem(parb18,elseifdif)
+    stringitem(parb19,elseifdifi)
+    stringitem(parb20,elseifidn)
+    stringitem(parb21,elseifidni)
+    stringitem(parb22,elseifb)
+    stringitem(parb23,elseifnb)
+    stringitem(parb24,elseifdef)
+    stringitem(parb25,elseifndef)
 
     stringtable parb, 26
 
-    parp0   db  ".const",0
-    parp1   db  ".data?",0
-    parp2   db  ".data",0
-    parp3   db  ".code",0
-    parp4   db  ".if",0
-    parp5   db  ".while",0
-    parp6   db  ".repeat",0
-    parp7   db  ".rept",0
-    parp8   db  ".switch",0
-    parp9   db  ".endif",0
-    parp10  db  ".endw",0
-    parp11  db  ".endsw",0
-    parp12  db  ".until",0
-    parp13  db  ".untilcxz",0
-    parp14  db  ".elseif",0
-    parp15  db  ".else",0
-    parp16  db  ".case", 0
-    parp17  db  ".default", 0
+    stringitem(parp0 ,.const)
+    stringitem(parp1 ,.data?)
+    stringitem(parp2 ,.data)
+    stringitem(parp3 ,.code)
+    stringitem(parp4 ,.if)
+    stringitem(parp5 ,.while)
+    stringitem(parp6 ,.repeat)
+    stringitem(parp7 ,.rept)
+    stringitem(parp8 ,.switch)
+    stringitem(parp9 ,.endif)
+    stringitem(parp10,.endw)
+    stringitem(parp11,.endsw)
+    stringitem(parp12,.until)
+    stringitem(parp13,.untilcxz)
+    stringitem(parp14,.elseif)
+    stringitem(parp15,.else)
+    stringitem(parp16,.case)
+    stringitem(parp17,.default)
 
     stringtable parp, 18
 
-    pard0   db  "ForLp",0
-    pard1   db  "ForLpD",0
-    pard2   db  "ForLpN",0
-    pard3   db  "ForLpR",0
-    pard4   db  "switch",0
-    pard5   db  "Next",0
-    pard6   db  "NextN",0
-    pard7   db  "NextR",0
-    pard8   db  "endsw",0
-    pard9   db  "case",0
-    pard10  db  "default",0
+    stringitem(pard0 ,ForLp)
+    stringitem(pard1 ,ForLpD)
+    stringitem(pard2 ,ForLpN)
+    stringitem(pard3 ,ForLpR)
+    stringitem(pard4 ,switch)
+    stringitem(pard5 ,Next)
+    stringitem(pard6 ,NextN)
+    stringitem(pard7 ,NextR)
+    stringitem(pard8 ,endsw)
+    stringitem(pard9 ,case)
+    stringitem(pard10,default)
 
     stringtable pard, 11
 
-    parr0   db  "@if",0
-    parr1   db  "@while",0
-    parr2   db  "@dothis",0
-    parr3   db  "@endif",0
-    parr4   db  "@endw",0
-    parr5   db  "@whilethis",0
-    parr6   db  "@elseif",0
-    parr7   db  "@else",0
+    stringitem(parr0,@if)
+    stringitem(parr1,@while)
+    stringitem(parr2,@dothis)
+    stringitem(parr3,@endif)
+    stringitem(parr4,@endw)
+    stringitem(parr5,whilethis)
+    stringitem(parr6,@elseif)
+    stringitem(parr7,@else)
 
     stringtable parr, 8
 
@@ -134,10 +141,32 @@
     section_code    equ 3
 
 
-    ntokens     dd  0
+    ntokens     xd  0
     vtoken      xd  nStoredTokens dup (0)       ; values of tokens
     ltoken      xd  nStoredTokens dup (0)       ; token length
     ttoken      xd  nStoredTokens dup (0)       ; token type
+    _vtoken macro arg1
+        if @ws eq 4
+           % exitm <vtoken[&arg1&]>
+        else
+            exitm <qword ptr [r13+&arg1&]>
+        endif 
+    endm 
+    _ltoken macro arg1
+        if @ws eq 4
+           % exitm <ltoken[&arg1&]>
+        else
+            exitm <qword ptr [r14+&arg1&]>
+        endif 
+    endm 
+    _ttoken macro arg1
+        if @ws eq 4
+           % exitm <ttoken[&arg1&]>
+        else
+            exitm <qword ptr [r15+&arg1&]>
+        endif 
+    endm 
+
     commentary  xd  0
     lcomment    xd  0 
     pcomment    xd  0 
