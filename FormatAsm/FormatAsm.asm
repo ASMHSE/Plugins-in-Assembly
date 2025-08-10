@@ -11,6 +11,9 @@ if    @ws eq 4
 ;    include \masm32\include\debug.inc
 ;    includelib \masm32\lib\debug.lib
 endif 
+
+@reg32_64 edx, r11
+
 ; ¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤
 
   ; **********************

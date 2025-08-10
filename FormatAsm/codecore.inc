@@ -39,7 +39,7 @@ szFormatText proc mem : XWORD, mem2 : XWORD, nlen : XWORD
         @if al eq 0Dh 
         @elseif al eq 0Ah 
             mov   final, xdi 
-            sub   final, 1 
+           sub   final, 1 
             invoke ProcessLine 
             invoke ProcessToken, xsi 
             mov   xsi, xax 
@@ -86,8 +86,14 @@ plugin_function proc
     invoke SendMessage, hEdit, WM_GETTEXT, tLen, pMem ; current line written to tbuf
 
     invoke szFormatText, pMem, pMem2, tLen 
-
+    if @ws eq 4
     invoke szCmpi, pMem, pMem2, tLen 
+    else
+    invoke szCmpi, pMem, pMem2
+ ;   DBreg xax
+ ;   DBout pMem2
+    mov xax, 1
+    endif
     @if xax gt 0 
         invoke SendMessage, hEdit, WM_SETTEXT, 0, pMem2 ; get the character range
 

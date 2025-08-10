@@ -1,186 +1,3 @@
-compara macro arg1, arg2, arg3, arg4 
-    local difiere 
-    ifnb  <arg4> 
-        ifdifi <xax>, <arg3> 
-            _push xax 
-        endif 
-        mov   xax, arg3 
-        @if xax ne arg4 
-            ifdifi <xax>, <arg3> 
-                _pop  xax 
-            endif 
-            jmp   difiere 
-        @endif 
-        ifdifi <xax>, <arg3> 
-            _correction +1 
-            _pop  xax 
-        endif 
-    endif 
-    
-    invoke szCmpiG, arg1, arg2, arg3 
-    difiere: 
-endm  
-
-checkpmlevels macro 
-    mov   xax, 0 
-    @if plevel gt 0 
-        mov   xdx, 0 
-        mov   xax, plevel 
-        dec   xax 
-        mov   xcx, ltab 
-        mul   xcx 
-        add   xax, pmargin 
-    @endif 
-    push  xax 
-    mov   xax, 0 
-    @if mlevel gt 0 
-        mov   xdx, 0 
-        mov   xax, mlevel 
-        dec   xax 
-        mov   xcx, ltab 
-        mul   xcx 
-        @if section gt 3 
-            add   xax, mmargin 
-        @endif 
-    @endif 
-    pop   xdx 
-    add   xdx, xax 
-    @if xdx gt 0 
-        invoke memfillb, mem2, xdx, " " 
-        mov   mem2, xax 
-    @endif 
-endm  
-
-checkpoint macro 
-    ForLp i, 0, 17 
-        lea   xcx, parp 
-        shl   xax, 1 
-        mov   xdx, [xcx+xax*@ws+@ws] 
-        mov   xax, [xcx+xax*@ws] 
-        compara _vtoken(xbx*@ws), xax, _ltoken(xbx*@ws), xdx 
-        @if xax eq 0 
-            mov   xax, i 
-            @if xax lt 4 
-                mov   section, xax 
-                @if xax lt 3 
-                    if    @ws eq 8 
-                        DBout "section" 
-                    endif 
-                    jmp   loop5b 
-                @endif 
-            @elseif xax lt 9 
-                mov   levf1, 1 
-            @elseif xax lt 14 
-                dec   level 
-            @else 
-                dec   level 
-                mov   levf1, 1 
-            @endif 
-            @if xax gt 3 
-                jmp   loop5a 
-            @endif 
-        @endif 
-    Next  i 
-endm  
-
-checkarroba macro 
-    ForLp i, 0, 7 
-        lea   xcx, parr 
-        shl   xax, 1 
-        mov   xdx, [xcx+xax*@ws+@ws] 
-        mov   xax, [xcx+xax*@ws] 
-        compara _vtoken(xbx*@ws), xax, _ltoken(xbx*@ws), xdx 
-        @if xax eq 0 
-            mov   xax, i 
-            @if xax lt 3 
-                mov   levf1, 1 
-            @elseif xax lt 6 
-                dec   level 
-            @else 
-                dec   level 
-                mov   levf1, 1 
-            @endif 
-            jmp   checkflowend 
-        @endif 
-    Next  i 
-endm  
-
-checkconditional macro 
-    ForLp i, 0, 25 
-        lea   xcx, parb 
-        shl   xax, 1 
-        mov   xdx, [xcx+xax*@ws+@ws] 
-        mov   xax, [xcx+xax*@ws] 
-        compara _vtoken(xbx*@ws), xax, _ltoken(xbx*@ws), xdx 
-        @if xax eq 0 
-            mov   xax, i 
-            @if xax lt 12 
-                mov   levf1, 1 
-            @elseif xax eq 12 
-                dec   level 
-            @else 
-                dec   level 
-                mov   levf1, 1 
-            @endif 
-            ExitFor i 
-        @endif 
-    Next  i 
-endm  
-
-checkflow macro 
-    ForLp i, 1, 8 
-        lea   xcx, para 
-        shl   xax, 1 
-        mov   xdx, [xcx+xax*@ws+@ws] 
-        mov   xax, [xcx+xax*@ws] 
-        compara _vtoken(xbx*@ws), xax, _ltoken(xbx*@ws), xdx 
-        @if xax eq 0 
-            lea   xcx, levelt 
-            @if i eq 1 
-                dec   level 
-                mov   xax, level 
-                @if xword ptr[xcx+xax*@ws] eq 1 
-                    dec   mlevel 
-                    mov   xword ptr [xcx+xax*@ws], 0 
-                @endif 
-            @else 
-                mov   xax, level 
-                mov   xword ptr [xcx+xax*@ws], 0 
-                mov   levf1, 1 
-            @endif 
-            jmp   checkflowend 
-        @endif 
-    Next  i 
-    ForLp i, 0, 10 
-        lea   xcx, pard 
-        shl   xax, 1 
-        mov   xdx, [xcx+xax*@ws+@ws] 
-        mov   xax, [xcx+xax*@ws] 
-        compara _vtoken(xbx*@ws), xax, _ltoken(xbx*@ws), xdx 
-        @if xax eq 0 
-            mov   xax, i 
-            @if xax lt 5 
-                mov   levf1, 1 
-                @if xax eq 4 
-                    mov   rev3, 1 
-                @endif 
-            @elseif xax lt 9 
-                dec   level 
-                @if xax eq 8 
-                    dec   level 
-                @endif 
-            @else 
-                @if rev3 eq 1 
-                    dec   rev3 
-                @else 
-                    dec   level 
-                @endif 
-                mov   levf1, 1 
-            @endif 
-            jmp   checkflowend 
-        @endif 
-    Next  i 
-endm  
 ; ¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤
 .data 
 
@@ -194,13 +11,13 @@ endm
     levelt          xd  20 dup (0)
     levf1           xd   0
     rev3            xd   0
+
 .code 
 
 ; ¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤
 align 16 
 
 memfillb proc lpmem : XWORD, ln : XWORD, fill : byte 
-
     mov   xdx, lpmem ; buffer address
     @if ln gt 0 
         mov   al, fill ; fill chars
@@ -256,6 +73,187 @@ MemCopyX proc Source : PTR BYTE, Dest : PTR BYTE, ln : XWORD
 MemCopyX endp 
 
 ; ¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤
+compara macro arg1, arg2, arg3, arg4 
+    local difiere 
+    ifnb  <arg4> 
+        ifdifi <xax>, <arg3> 
+            _push xax 
+        endif 
+        mov   xax, arg3 
+        @if xax ne arg4 
+            ifdifi <xax>, <arg3> 
+                _pop  xax 
+            endif 
+            jmp   difiere 
+        @endif 
+        ifdifi <xax>, <arg3> 
+            _correction +1 
+            _pop  xax 
+        endif 
+    endif 
+
+    invoke szCmpiG, arg1, arg2, arg3 
+  difiere: 
+endm  
+
+checkpmlevels macro 
+    mov   xax, 0 
+    @if plevel gt 0 
+        mov   xdx, 0 
+        mov   xax, plevel 
+        dec   xax 
+        mov   xcx, ltab 
+        mul   xcx 
+        add   xax, pmargin 
+    @endif 
+    _push xax 
+    mov   xax, 0 
+    @if mlevel gt 0 
+        mov   xdx, 0 
+        mov   xax, mlevel 
+        dec   xax 
+        mov   xcx, ltab 
+        mul   xcx 
+        @if section gt 3 || section eq 2 
+            add   xax, mmargin 
+        @endif 
+    @endif 
+    _pop  xdx 
+    add   xdx, xax 
+    @if xdx gt 0 
+        invoke memfillb, mem2, xdx, 32 
+        mov   mem2, xax 
+    @endif 
+endm  
+
+checkpoint macro 
+    ForLp i, 0, 17 
+        lea   xcx, parp 
+        shl   xax, 1 
+        mov   _edx, [xcx+xax*@ws+@ws] 
+        mov   xax, [xcx+xax*@ws] 
+        ;DBout xax
+        compara _vtoken(xbx*@ws), xax, _ltoken(xbx*@ws), _edx 
+        @if xax eq 0 
+            mov   xax, i 
+            @if xax lt 4 
+                mov   section, xax 
+                @if xax lt 3 
+                    jmp   loop5b 
+                @endif 
+            @elseif xax lt 9 
+                mov   levf1, 1 
+            @elseif xax lt 14 
+                dec   level 
+            @else 
+                dec   level 
+                mov   levf1, 1 
+            @endif 
+            @if xax gt 3 
+                jmp   loop5a 
+            @endif 
+        @endif 
+    Next  i 
+endm  
+
+checkarroba macro 
+    ForLp i, 0, 7 
+        lea   xcx, parr 
+        shl   xax, 1 
+        mov   _edx, [xcx+xax*@ws+@ws] 
+        mov   xax, [xcx+xax*@ws] 
+        compara _vtoken(xbx*@ws), xax, _ltoken(xbx*@ws), _edx 
+        @if xax eq 0 
+            mov   xax, i 
+            @if xax lt 3 
+                mov   levf1, 1 
+            @elseif xax lt 6 
+                dec   level 
+            @else 
+                dec   level 
+                mov   levf1, 1 
+            @endif 
+            jmp   checkflowend 
+        @endif 
+    Next  i 
+endm  
+
+checkconditional macro 
+    ForLp i, 0, 25 
+        lea   xcx, parb 
+        shl   xax, 1 
+        mov   _edx, [xcx+xax*@ws+@ws] 
+        mov   xax, [xcx+xax*@ws] 
+        compara _vtoken(xbx*@ws), xax, _ltoken(xbx*@ws), _edx 
+        @if xax eq 0 
+            mov   xax, i 
+            @if xax lt 12 
+                mov   levf1, 1 
+            @elseif xax eq 12 
+                dec   level 
+            @else 
+                dec   level 
+                mov   levf1, 1 
+            @endif 
+            ExitFor i 
+        @endif 
+    Next  i 
+endm  
+
+checkflow macro 
+    ForLp i, 1, 8 
+        lea   xcx, para 
+        shl   xax, 1 
+        mov   _edx, [xcx+xax*@ws+@ws] 
+        mov   xax, [xcx+xax*@ws] 
+        compara _vtoken(xbx*@ws), xax, _ltoken(xbx*@ws), _edx 
+        @if xax eq 0 
+            lea   xcx, levelt 
+            @if i eq 1 
+                dec   level 
+                mov   xax, level 
+                @if xword ptr[xcx+xax*@ws] eq 1 
+                    dec   mlevel 
+                    mov   xword ptr [xcx+xax*@ws], 0 
+                @endif 
+            @else 
+                mov   xax, level 
+                mov   xword ptr [xcx+xax*@ws], 0 
+                mov   levf1, 1 
+            @endif 
+            jmp   checkflowend 
+        @endif 
+    Next  i 
+    ForLp i, 0, 10 
+        lea   xcx, pard 
+        shl   xax, 1 
+        mov   _edx, [xcx+xax*@ws+@ws] 
+        mov   xax, [xcx+xax*@ws] 
+        compara _vtoken(xbx*@ws), xax, _ltoken(xbx*@ws), _edx 
+        @if xax eq 0 
+            mov   xax, i 
+            @if xax lt 5 
+                mov   levf1, 1 
+                @if xax eq 4 
+                    mov   rev3, 1 
+                @endif 
+            @elseif xax lt 9 
+                dec   level 
+                @if xax eq 8 
+                    dec   level 
+                @endif 
+            @else 
+                @if rev3 eq 1 
+                    dec   rev3 
+                @else 
+                    dec   level 
+                @endif 
+                mov   levf1, 1 
+            @endif 
+            jmp   checkflowend 
+        @endif 
+    Next  i 
+endm  
 
 ProcessToken proc mem2 : XWORD 
     USING xbx, xdi 
@@ -385,39 +383,35 @@ ProcessToken proc mem2 : XWORD
                 @endif 
             @endif 
             @if section lt 3 
-                if    @ws eq 8 
-                    DBout "acá" 
-                endif 
               loop5d: 
-                mov   xdx, final 
-                sub   xdx, inicio 
+                mov   _edx, final 
+                sub   _edx, inicio 
                 @if xdx gt 0 
-                    _push xdx 
-                    invoke MemCopyX, inicio, mem3, xdx 
+                    _push _edx 
+                    invoke MemCopyX, inicio, mem3, _edx 
                     _pop  xax 
-                    add   xax, mem2 ;3 
+                    add   xax, mem3 
                     mov   mem2, xax 
-                    if    @ws eq 8 
-                        DBout "acá2" 
-                    endif 
                 @endif 
                 jmp   termina2 
             @endif 
             checkflow 
           checkflowend: 
+
           loop5a: 
             checkpmlevels 
             mov   xdx, 0 
             mov   xax, level 
-            sub   xax, mlevel 
-       ; sub   xax, plevel 
+          ;  sub   xax, mlevel 
+          ; sub   xax, plevel 
             @if xax gt 0 
                 mov   xcx, ltab 
                 mul   xcx 
                 add   xax, rev1 
                 add   xax, rev2 
                 @if xax gt 0 ; OJO
-                    invoke memfillb, mem2, xax, " " 
+                    ;int 3
+                    invoke memfillb, mem2, xax, 32 
                     mov   mem2, xax 
                 @endif 
             @endif 
@@ -427,7 +421,7 @@ ProcessToken proc mem2 : XWORD
             mov   xax, _ltoken(xbx*@ws) 
             add   xax, mem2 
             mov   mem2, xax 
-            invoke memfillb, mem2, sep1, " " 
+            invoke memfillb, mem2, sep1, 32 
             mov   mem2, xax 
             mov   sep1, 1 
 
@@ -447,7 +441,7 @@ ProcessToken proc mem2 : XWORD
             mov   xax, _ltoken(xbx*@ws) 
             add   xax, mem2 
             mov   mem2, xax 
-            invoke memfillb, mem2, sep1, " " 
+            invoke memfillb, mem2, sep1, 32 
             mov   mem2, xax 
           loop5c: 
             inc   xbx 
@@ -462,7 +456,7 @@ ProcessToken proc mem2 : XWORD
     @if ntokens ne -1 
         mov   currentcolumn, xax 
         @if xax gt 0 
-            invoke memfillb, mem2, xax, " " 
+            invoke memfillb, mem2, xax, 32 
             mov   mem2, xax 
         @endif 
         mov   xbx, 0 
@@ -475,7 +469,7 @@ ProcessToken proc mem2 : XWORD
             mov   xax, _ltoken(xbx*@ws) 
             add   xax, mem2 
             mov   mem2, xax 
-            invoke memfillb, mem2, 1, " " 
+            invoke memfillb, mem2, 1, 32 
             mov   mem2, xax 
 
           loop6c: 
@@ -487,7 +481,7 @@ ProcessToken proc mem2 : XWORD
   termina: 
     @if lcomment gt 0 
         @if ntokens eq -1 
-            invoke memfillb, mem2, pcomment, " " 
+            invoke memfillb, mem2, pcomment, 32 
             mov   mem2, xax 
         @endif 
         invoke MemCopyX, commentary, mem2, lcomment 

@@ -61,7 +61,7 @@ ProcessLine proc ;here a comment
     @endif 
     mov   byte ptr [xcx], 0 
     if    @ws eq 8 
-        DBout str$(linea), " - ", addr buffer 
+    ;    DBout str$(linea), " - ", addr buffer 
     else  
     ;    PrintString buffer
     endif 
