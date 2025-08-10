@@ -68,8 +68,8 @@ plugin_function proc
     local cr : CHARRANGE 
 
     if @ws eq 8 
-        DBbegin 
-        DBout "running"
+        ;DBbegin 
+        ;DBout "running"
     endif 
     invoke SendMessage, hEdit, WM_GETTEXTLENGTH, 0, 0 ; get the text length
     inc   xax 
@@ -110,7 +110,7 @@ plugin_function proc
     free  pMem 
     free  pMem2 
     if    @ws eq 8 
-        DBend 
+        ;DBend 
     endif 
     ret   
 
