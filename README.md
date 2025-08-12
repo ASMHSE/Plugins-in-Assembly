@@ -11,10 +11,8 @@ Framework : [Masm32 SDK](https://masm32.com/)
 
 Current features:
 
-- Only working for qEditor (so far).
-
 - Process all file (TODO selection)
 
-- Changes only in .code section and macros.
+- Changes only in procedures and macros.
   
 - No changes in lines with just a comment.
