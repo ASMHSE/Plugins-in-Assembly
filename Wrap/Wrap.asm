@@ -7,12 +7,6 @@ endif
 AllowPromotions equ 1 
 include \masm32\include\neutral.inc 
 include \masm32\macros\SmplMath\math.inc 
-if    @ws eq 4 
-    include \masm32\include\debug.inc
-    includelib \masm32\lib\debug.lib
-endif 
-
-@reg32_64 edx, r11
 
 ; ¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤
 
@@ -72,10 +66,6 @@ ENDM
       hMenu     xd ?
       hIcon     xd ?
 
-.data 
-
-include datacore.inc
-
 if @ws eq 8
     switch  textequ <.switch>
     case    textequ <.case>
@@ -111,7 +101,7 @@ piInterface proc hWin : QWORD, Menu : QWORD, Edit : QWORD, tbar : QWORD, sbar : 
     mrm   hToolBar, tbar 
     mrm   hStatus, sbar 
 
-    call  plugin_function 
+    invoke SendMessage,hEdit,EM_SETTARGETDEVICE, 0, 0
 
     ret   
 
@@ -155,7 +145,7 @@ PiEntryPoint proc QEinterface : DWORD
     mov   hStatus, GethStatus() 
     mov   hMenu, GethMnu() 
 
-    call  plugin_function 
+    invoke SendMessage,hEdit,EM_SETTARGETDEVICE, 0, 0
 
     ret   
 
@@ -181,13 +171,11 @@ Plugin_Interface proc \
     mrm   hEdit, Edit 
     mrm   hIcon, Icon 
 
-    call  plugin_function 
+    invoke SendMessage,hEdit,EM_SETTARGETDEVICE, 0, 0
 
     ret   
 Plugin_Interface endp 
 endif 
 endif 
-
-include codecore.inc 
 
 end 
